@@ -215,6 +215,21 @@ public class LandService {
         return updatedLand;
     }
 
+//    public void deleteLand(Long id) {
+//        // Fetch the existing Land entity by ID
+//        Land existingLand = landRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Land not found with ID: " + id));
+//        // Remove all relationships to avoid constraint violations
+//        existingLand.setAddress(null);
+//        existingLand.setPurchaser(null);
+//        existingLand.setOwner(null);
+//        existingLand.getPartners().clear();
+//        // Save the updated Land entity to detach relationships
+//        landRepository.save(existingLand);
+//        // Now delete the Land entity
+//        landRepository.delete(existingLand);
+//    }
+
     public void deleteLand(Long id) {
         // Fetch the existing Land entity by ID
         Land existingLand = landRepository.findById(id)
