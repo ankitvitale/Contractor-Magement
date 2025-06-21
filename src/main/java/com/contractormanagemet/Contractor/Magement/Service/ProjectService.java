@@ -2,15 +2,12 @@ package com.contractormanagemet.Contractor.Magement.Service;
 
 import com.contractormanagemet.Contractor.Magement.DTO.RequestDTO.ProjectRequestDto;
 import com.contractormanagemet.Contractor.Magement.DTO.ResponseDTO.ProjectResponseDto;
-import com.contractormanagemet.Contractor.Magement.Entity.Land;
-import com.contractormanagemet.Contractor.Magement.Entity.Project;
-import com.contractormanagemet.Contractor.Magement.Entity.Superisor;
+import com.contractormanagemet.Contractor.Magement.Entity.*;
 import com.contractormanagemet.Contractor.Magement.Exception.ResourceNotFoundException;
-import com.contractormanagemet.Contractor.Magement.Repository.LandRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.ProjectRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.SuperisorRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.*;
 import com.contractormanagemet.Contractor.Magement.mapper.ProjectMapper;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +24,14 @@ public class ProjectService {
     private SuperisorRepository superisorRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+    @Autowired
     private LandRepository landRepository;
+@Autowired
+private  ContractorRepository contractorRepository;
+    @Autowired
+    private StructureContractorRepository structureContractorRepository;
+
     public Project createProject(ProjectRequestDto projectRequestDto) {
         Project project=projectMapper.toProject(projectRequestDto);
         Land land=landRepository.findById(projectRequestDto.getLandId())
@@ -71,23 +75,36 @@ public class ProjectService {
         return updatedProject;
     }
 
+    @Transactional
+    public void deleteProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
 
-    public void deleteProject(Long id) {
-        // Check if the project exists
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + id));
-        // Delete related entries from residency
-        projectRepository.deleteResidenciesByProjectId(id);
-        // Delete related entries from expense_installment
+        // 1. Delete all contractors manually first
+        List<Contractor> contractors = contractorRepository.findByProjectId(projectId);
+        contractorRepository.deleteAll(contractors);
 
-     //   projectRepository.deleteExpenseInstallmentsByProjectId(id);
-  //      projectRepository.deleteExpensesByProjectId(id);
-        // Delete related entries in the app_user_allowed_site table
-     //   projectRepository.deleteAppUserAllowedSiteByProjectId(id);
+        // Manually delete contractors
+        List<StructureContractor> contractors1 = structureContractorRepository.findByProjectId(projectId);
+        structureContractorRepository.deleteAll(contractors1);
 
-        // Delete the project itself
-        projectRepository.deleteProjectById(id);
+        // Delete products if any
+        productRepository.deleteAll(project.getProducts());
+
+        // Unlink supervisors
+        project.getSupervisors().forEach(s -> s.getAllowedSite().remove(project));
+        project.getSupervisors().clear();
+
+        // Unlink land
+        if (project.getLand() != null) {
+            project.getLand().setProject(null);
+            project.setLand(null);
+        }
+
+        // Delete the project
+        projectRepository.delete(project);
     }
+
 
     public Project allowedSiteSupervisor(Long userId, Long projectId) {
         Superisor supervisor = superisorRepository.findById(userId)

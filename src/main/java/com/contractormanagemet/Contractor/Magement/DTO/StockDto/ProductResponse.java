@@ -17,7 +17,8 @@ public class ProductResponse {
     private ProjectSummary project;
     private int usedQuantity;
     private int remainingQuantity;
-
+    public ProductResponse() {
+    }
     public Long getId() {
         return id;
     }

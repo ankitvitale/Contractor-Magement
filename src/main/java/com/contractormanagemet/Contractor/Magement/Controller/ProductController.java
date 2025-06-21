@@ -87,7 +87,7 @@ public class ProductController {
         return ResponseEntity.ok("Product deleted successfully");
     }
 
-    @PutMapping("/ /{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable Long id,
             @RequestBody ProductRequest request) {

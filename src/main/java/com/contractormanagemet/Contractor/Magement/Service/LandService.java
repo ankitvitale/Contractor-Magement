@@ -7,6 +7,7 @@ import com.contractormanagemet.Contractor.Magement.Entity.enumeration.Transactio
 import com.contractormanagemet.Contractor.Magement.Exception.ResourceNotFoundException;
 import com.contractormanagemet.Contractor.Magement.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class LandService {
     private PartnerRepository partnerRepository;
     @Autowired
     private LandTransactionRepository landTransactionRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     public Land createLand(LandRequestDTO landRequestDTO) {
 
@@ -215,35 +219,49 @@ public class LandService {
         return updatedLand;
     }
 
-//    public void deleteLand(Long id) {
-//        // Fetch the existing Land entity by ID
-//        Land existingLand = landRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Land not found with ID: " + id));
-//        // Remove all relationships to avoid constraint violations
-//        existingLand.setAddress(null);
-//        existingLand.setPurchaser(null);
-//        existingLand.setOwner(null);
-//        existingLand.getPartners().clear();
-//        // Save the updated Land entity to detach relationships
-//        landRepository.save(existingLand);
-//        // Now delete the Land entity
-//        landRepository.delete(existingLand);
-//    }
-
+    @Transactional
     public void deleteLand(Long id) {
-        // Fetch the existing Land entity by ID
+        // Step 1: Fetch the existing land with all relationships
         Land existingLand = landRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Land not found with ID: " + id));
-        // Remove all relationships to avoid constraint violations
-        existingLand.setAddress(null);
+
+        // Step 2: Clear and delete partners
+        if (existingLand.getPartners() != null && !existingLand.getPartners().isEmpty()) {
+            for (Partner partner : existingLand.getPartners()) {
+                partner.setLand(null);
+            }
+            partnerRepository.deleteAll(existingLand.getPartners());
+            existingLand.getPartners().clear();
+        }
+
+        // Step 3: Handle project reference (avoid foreign key issues)
+        if (existingLand.getProject() != null) {
+            existingLand.getProject().setLand(null);
+        }
+
+        // Step 4: Detach person and address references
+        Person purchaser = existingLand.getPurchaser();
+        Person owner = existingLand.getOwner();
+        Address address = existingLand.getAddress();
+
         existingLand.setPurchaser(null);
         existingLand.setOwner(null);
-        existingLand.getPartners().clear();
-        // Save the updated Land entity to detach relationships
+        existingLand.setAddress(null);
+
+        // Step 5: Save the land with detached entities
         landRepository.save(existingLand);
-        // Now delete the Land entity
+
+        // Step 6: Now delete the land
         landRepository.delete(existingLand);
+
+        // Step 7: Delete detached related entities (optional and only if not reused)
+        if (purchaser != null) personRepository.delete(purchaser);
+        if (owner != null) personRepository.delete(owner);
+        if (address != null) addressRepository.delete(address);
     }
+
+
+
 
     public LandTransaction addPayment(LandTransactionDto landTransactionDto, Long partnerId) {
         Partner partner = partnerRepository.findById(partnerId)

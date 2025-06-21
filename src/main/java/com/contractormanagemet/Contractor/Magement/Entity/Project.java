@@ -55,7 +55,7 @@ public class Project implements Serializable {
     private Set<Residency> residencies = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project" ,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("project") // avoid circular loop on Product side
     private Set<Product> products = new HashSet<>();
 

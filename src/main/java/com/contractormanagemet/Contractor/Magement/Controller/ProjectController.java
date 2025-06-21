@@ -33,7 +33,7 @@ public class ProjectController {
       return ResponseEntity.ok(createProject);
     }
     @GetMapping("/getAllProjects")
-    @PreAuthorize("hasAnyRole('Admin','AppUser')")
+    @PreAuthorize("hasAnyRole('Admin','Superisor')")
     public ResponseEntity<List<?>> getAllProject(Authentication authentication){
         String email = authentication.getName();
         List<?> projects;
@@ -77,9 +77,14 @@ public class ProjectController {
 
     @DeleteMapping("/deleteProject/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        projectService.deleteProject(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteProject(@PathVariable Long id) {
+        try {
+            projectService.deleteProject(id);
+            return ResponseEntity.ok("Project deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
     }
 
 }
