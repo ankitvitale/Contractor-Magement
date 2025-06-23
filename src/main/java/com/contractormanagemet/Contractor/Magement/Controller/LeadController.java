@@ -34,14 +34,14 @@ public class LeadController {
 
     @PostMapping("/{id}/addLogs")
     @PreAuthorize("hasAnyRole('Admin','Employee')")
-    public ResponseEntity<Lead> addLogsToLead(@PathVariable Long id, @RequestBody List<LeadLog> leadLogs) {
+    public ResponseEntity<Lead> addLogsToLead(@PathVariable("id") Long id, @RequestBody List<LeadLog> leadLogs) {
         Lead updatedLead = leadService.addLogsToLead(id, leadLogs);
         return ResponseEntity.ok(updatedLead);
     }
 
     @GetMapping("/getlead/{id}")
     @PreAuthorize("hasAnyRole('Admin','Employee')")
-    public ResponseEntity<Lead> getLeadById(@PathVariable Long id) {
+    public ResponseEntity<Lead> getLeadById(@PathVariable("id") Long id) {
         Lead lead = leadService.getLeadById(id); // Fetch the lead with logs
         return ResponseEntity.ok(lead);
     }
@@ -54,7 +54,7 @@ public class LeadController {
     }
     @DeleteMapping("/deleteLead/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> deleteLead(@PathVariable Long id) {
+    public ResponseEntity<String> deleteLead(@PathVariable("id") Long id) {
         boolean isDeleted = leadService.deleteLead(id);
         if (isDeleted) {
             return ResponseEntity.ok("Lead deleted successfully.");
@@ -65,14 +65,14 @@ public class LeadController {
 
     @PutMapping("/updateLead/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Lead> updateLead(@PathVariable Long id, @RequestBody Lead lead) {
+    public ResponseEntity<Lead> updateLead(@PathVariable("id") Long id, @RequestBody Lead lead) {
         Lead updatedLead = leadService.updateLead(id, lead);
         return ResponseEntity.ok(updatedLead);
     }
 
     @PostMapping("/remark/{id}/remark")
     @PreAuthorize("hasAnyRole('Admin','Employee')")
-    public ResponseEntity<Lead> addRemark(@PathVariable Long id, @RequestBody RemarkRequest remarkRequest) {
+    public ResponseEntity<Lead> addRemark(@PathVariable("id") Long id, @RequestBody RemarkRequest remarkRequest) {
         Lead updatedLead = leadService.addRemark(id, remarkRequest.getRemark(), remarkRequest.getRemarkdate());
         return ResponseEntity.ok(updatedLead);
     }
