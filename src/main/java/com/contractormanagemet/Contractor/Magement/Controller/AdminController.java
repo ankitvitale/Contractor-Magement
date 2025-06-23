@@ -52,7 +52,7 @@ public class AdminController {
 
     @PutMapping("/allowedSiteSupervisor/{userId}/{projectId}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Project> allowedSiteSupervisor(@PathVariable Long userId, @PathVariable Long projectId) {
+    public ResponseEntity<Project> allowedSiteSupervisor(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
         Project allowedProject = projectService.allowedSiteSupervisor(userId, projectId);
         return ResponseEntity.ok(allowedProject);
     }
@@ -65,7 +65,7 @@ public class AdminController {
 
     @PutMapping("/releaseSiteSupervisor/{userId}/{projectId}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Project> releaseSiteSupervisor(@PathVariable Long userId, @PathVariable Long projectId) {
+    public ResponseEntity<Project> releaseSiteSupervisor(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
         Project updatedProject = projectService.releaseSiteSupervisor(userId, projectId);
         return ResponseEntity.ok(updatedProject);
     }

@@ -36,7 +36,7 @@ public class DemandLetterController {
     @GetMapping("/getDemandLetterById/{id}")
     @PreAuthorize("hasRole('Admin')")
 
-    public DemandLetter getDemandLetterById(@PathVariable Long id) {
+    public DemandLetter getDemandLetterById(@PathVariable("id") Long id) {
         return demandLetterService.getDemandLetterById(id);
     }
 
@@ -44,7 +44,7 @@ public class DemandLetterController {
     @PutMapping("/updateDemandLetter/{id}")
     @PreAuthorize("hasRole('Admin')")
 
-    public DemandLetter updateDemandLetter(@PathVariable Long id, @RequestBody DemandLetter demandLetter) {
+    public DemandLetter updateDemandLetter(@PathVariable("id") Long id, @RequestBody DemandLetter demandLetter) {
         return demandLetterService.updateDemandLetter(id, demandLetter);
     }
 
@@ -52,7 +52,7 @@ public class DemandLetterController {
     @DeleteMapping("/deleteDemandLetter/{id}")
     @PreAuthorize("hasRole('Admin')")
 
-    public String deleteDemandLetter(@PathVariable Long id) {
+    public String deleteDemandLetter(@PathVariable("id") Long id) {
         demandLetterService.deleteDemandLetter(id);
         return "DemandLetter with ID " + id + " has been deleted.";
     }

@@ -37,12 +37,12 @@ public class StructureContractorController {
 //    }
 
     @GetMapping("/show-StructureContractor/by-project/{projectId}")
-    public ResponseEntity<ContractorListWithTotalDto> getByProjectId(@PathVariable Long projectId) {
+    public ResponseEntity<ContractorListWithTotalDto> getByProjectId(@PathVariable("projectId") Long projectId) {
         return ResponseEntity.ok(contractorService.getContractorsByProjectId(projectId));
     }
 
     @GetMapping("/structure-contractor/{id}")
-    public ResponseEntity<StructureContractorResponseDto> getContractorById(@PathVariable Long id) {
+    public ResponseEntity<StructureContractorResponseDto> getContractorById(@PathVariable("id") Long id) {
         StructureContractorResponseDto dto = contractorService.getContractorById(id);
         return ResponseEntity.ok(dto);
     }
@@ -50,13 +50,13 @@ public class StructureContractorController {
 
     @PutMapping("/update-StructureContractor/{id}")
     public ResponseEntity<StructureContractorResponseDto> updateContractor(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody StructureContractorRequestDto dto) {
         StructureContractorResponseDto updated = contractorService.updateContractor(id, dto);
         return ResponseEntity.ok(updated);
     }
     @DeleteMapping("/delete-StructureContractor/{id}")
-    public ResponseEntity<String> deleteContractor(@PathVariable Long id) {
+    public ResponseEntity<String> deleteContractor(@PathVariable("id") Long id) {
         contractorService.deleteContractor(id);
         return ResponseEntity.ok("Contractor deleted successfully");
     }

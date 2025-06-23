@@ -58,7 +58,7 @@ public class ProjectController {
     }
 
     @GetMapping("/getProjectById/{id}")
-    public ResponseEntity<ProjectResponseDto> getSingleProject(@PathVariable Long  id){
+    public ResponseEntity<ProjectResponseDto> getSingleProject(@PathVariable("id") Long  id){
         ProjectResponseDto project = projectService.getProjectById(id);
         if (project != null) {
             return ResponseEntity.ok(project);
@@ -69,7 +69,7 @@ public class ProjectController {
 
     @PutMapping("/updateProject/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody ProjectResponseDto projectResponseDto) {
+    public ResponseEntity<Project> updateProject(@PathVariable("id") Long id, @RequestBody ProjectResponseDto projectResponseDto) {
 
         Project updatedProject = projectService.updateProject(id, projectResponseDto);
         return ResponseEntity.ok(updatedProject);  // Return updated project as response
@@ -77,7 +77,7 @@ public class ProjectController {
 
     @DeleteMapping("/deleteProject/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<?> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProject(@PathVariable("id") Long id) {
         try {
             projectService.deleteProject(id);
             return ResponseEntity.ok("Project deleted successfully.");

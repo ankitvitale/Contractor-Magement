@@ -24,7 +24,7 @@ public class BankNocController {
 
     @GetMapping("/bankNoc/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public BankNoc getBankNocByid(@PathVariable long id){
+    public BankNoc getBankNocByid(@PathVariable("id") long id){
         return bankNocService.getBankNocByid(id);
     }
 
@@ -36,14 +36,14 @@ public class BankNocController {
 
     @DeleteMapping("/bankNoc/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public void deleteBankNoc(@PathVariable Long id) {
+    public void deleteBankNoc(@PathVariable("id") Long id) {
         bankNocService.deleteBankNocById(id);
     }
 
 
     @PutMapping("/bankNoc/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public BankNoc updateBankNoc(@PathVariable Long id, @RequestBody BankNoc bankNoc) {
+    public BankNoc updateBankNoc(@PathVariable("id") Long id, @RequestBody BankNoc bankNoc) {
         return bankNocService.updateBankNoc(id, bankNoc);
     }
 

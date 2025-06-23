@@ -26,7 +26,7 @@ public class AlotmentLetterController {
     // GET Alotment Letter by ID
     @GetMapping("/AlotmentLetterById/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public AlotmentLetter getAlotmentLetterById(@PathVariable Long id) {
+    public AlotmentLetter getAlotmentLetterById(@PathVariable("id") Long id) {
         return alotmentLetterService.getAlotmentLetterById(id);
     }
 
@@ -40,14 +40,14 @@ public class AlotmentLetterController {
     // PUT: Update existing Alotment Letter
     @PutMapping("/updateAlotmentLetter/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public AlotmentLetter updateAlotmentLetter(@PathVariable Long id, @RequestBody AlotmentLetter alotmentLetter) {
+    public AlotmentLetter updateAlotmentLetter(@PathVariable("id") Long id, @RequestBody AlotmentLetter alotmentLetter) {
         return alotmentLetterService.updateAlotmentLetter(id, alotmentLetter);
     }
 
     // DELETE: Remove an Alotment Letter
     @DeleteMapping("/deleteAlotmentLetter/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public String deleteAlotmentLetter(@PathVariable Long id) {
+    public String deleteAlotmentLetter(@PathVariable("id") Long id) {
         alotmentLetterService.deleteAlotmentLetter(id);
         return "Alotment Letter with ID " + id + " has been deleted.";
     }

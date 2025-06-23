@@ -38,25 +38,25 @@ public class ResidencyController {
 
     @GetMapping("/allResidencybyid/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Residency> getResidencyById(@PathVariable Long id) {
+    public ResponseEntity<Residency> getResidencyById(@PathVariable("id") Long id) {
         Residency residency = residencyService.getResidencyById(id);
         return ResponseEntity.ok(residency);
     }
     @GetMapping("/project/{projectId}")
 //@PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<ResidencyResponseDto>> getResidenciesByProjectId(@PathVariable Long projectId) {
+    public ResponseEntity<List<ResidencyResponseDto>> getResidenciesByProjectId(@PathVariable("projectId") Long projectId) {
         List<ResidencyResponseDto> residencies = (List<ResidencyResponseDto>) residencyService.getResidenciesByProjectId(projectId);
         return ResponseEntity.ok(residencies);
     }
     @PutMapping("/updateresidency/{id}")
-    public ResponseEntity<Residency> updateResidency(@PathVariable Long id, @RequestBody ResidencyRequestDto residencyDto) {
+    public ResponseEntity<Residency> updateResidency(@PathVariable("id") Long id, @RequestBody ResidencyRequestDto residencyDto) {
         Residency updatedResidency = residencyService.updateResidency(id, residencyDto);
         return ResponseEntity.ok(updatedResidency);
     }
 
     @DeleteMapping("/deleteResidency/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Residency> deleteResidency(@PathVariable  Long id){
+    public ResponseEntity<Residency> deleteResidency(@PathVariable("id")  Long id){
         Residency residency=residencyService.deleteResidency(id);
         return ResponseEntity.ok(residency);
 
@@ -64,7 +64,7 @@ public class ResidencyController {
 
     @GetMapping("/residenciesByProject/{projectId}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<Residency>> getResidenciesByProject(@PathVariable Long projectId) {
+    public ResponseEntity<List<Residency>> getResidenciesByProject(@PathVariable("projectId") Long projectId) {
         List<Residency> residencies = residencyService.getResidenciesByProject(projectId);
         return ResponseEntity.ok(residencies);
     }

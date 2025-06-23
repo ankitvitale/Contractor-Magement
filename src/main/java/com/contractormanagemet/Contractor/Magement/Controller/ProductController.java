@@ -29,14 +29,14 @@ public class ProductController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<Product> getProductById(@PathVariable("id")  Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
 
     @PostMapping("/{id}/add-stock")
     public ResponseEntity<Product> addStock(
-            @PathVariable Long id,
+            @PathVariable("id")  Long id,
             @RequestParam String quantityString,
             @RequestParam double price)
              {
@@ -46,14 +46,14 @@ public class ProductController {
 
     @PostMapping("/{id}/use-stock")
     public ResponseEntity<Product> useStock(
-            @PathVariable Long id,
+            @PathVariable("id")  Long id,
             @RequestBody UseStockRequest request) {
         return ResponseEntity.ok(productService.useStock(id, request.getQuantityUsed()));
     }
 
 
     @GetMapping("/{id}/stock")
-    public ResponseEntity<Map<String, Object>> getStock(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getStock(@PathVariable("id")  Long id) {
         Product product = productService.getProductStockDetails(id);
         Map<String, Object> result = new HashMap<>();
         result.put("productName", product.getName());
@@ -67,7 +67,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/usages")
-    public ResponseEntity<List<StockUsageResponse>> getUsageHistory(@PathVariable Long id) {
+    public ResponseEntity<List<StockUsageResponse>> getUsageHistory(@PathVariable("id")  Long id) {
         return ResponseEntity.ok(productService.getUsageHistory(id));
     }
     @GetMapping("/allProduct")
@@ -77,19 +77,19 @@ public class ProductController {
     }
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<List<ProductResponse>> getAllProductByProjectId(@PathVariable Long projectId) {
+    public ResponseEntity<List<ProductResponse>> getAllProductByProjectId(@PathVariable("projectId") Long projectId) {
         List<ProductResponse> products = productService.getAllProductByProjectId(projectId);
         return ResponseEntity.ok(products);
     }
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable("id")  Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<Product> updateProduct(
-            @PathVariable Long id,
+            @PathVariable("id")  Long id,
             @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.updateProduct(id, request));
     }

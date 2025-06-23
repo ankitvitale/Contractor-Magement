@@ -82,7 +82,7 @@ public class ContractorController {
 
     @DeleteMapping("/deleteContractorInstallment/{id}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<Map<String, String>> deleteContractorInstallment(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteContractorInstallment(@PathVariable("id") Long id) {
         contractorService.deleteContractorInstallment(id);
         return ResponseEntity.ok(Collections.singletonMap("message", "Deleted successfully"));
     }
@@ -90,14 +90,14 @@ public class ContractorController {
 
     @GetMapping("/{projectId}/Contractor")
     @PreAuthorize("hasAnyRole('Admin','AppUser')")
-    public ResponseEntity<List<AllContractorResponseDto>> getContractorByProject(@PathVariable Long projectId) {
+    public ResponseEntity<List<AllContractorResponseDto>> getContractorByProject(@PathVariable("projectId")  Long projectId) {
         List<AllContractorResponseDto> contractors = contractorService.getContractorByProject(projectId);
         return ResponseEntity.ok(contractors);
     }
 
     @GetMapping("/Contractor/{id}")
     @PreAuthorize("hasAnyRole('Admin','AppUser')")
-    public ResponseEntity<AllContractorResponseDto> getContractorById(@PathVariable Long id) {
+    public ResponseEntity<AllContractorResponseDto> getContractorById(@PathVariable("id") Long id) {
         AllContractorResponseDto contractorDto = contractorService.getContractorById(id);
         return ResponseEntity.ok(contractorDto);
     }
@@ -105,7 +105,7 @@ public class ContractorController {
 
     @DeleteMapping("/deleteContractor/{id}")
     @PreAuthorize("hasAnyRole('Admin','AppUser')")
-    public ResponseEntity<AllContractorResponseDto> deleteContractor(@PathVariable Long id) {
+    public ResponseEntity<AllContractorResponseDto> deleteContractor(@PathVariable("id") Long id) {
         AllContractorResponseDto dto = contractorService.deleteContractor(id);
         return ResponseEntity.ok(dto);
     }
