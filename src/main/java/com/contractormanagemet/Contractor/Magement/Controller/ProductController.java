@@ -1,9 +1,6 @@
 package com.contractormanagemet.Contractor.Magement.Controller;
 
-import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductRequest;
-import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductResponse;
-import com.contractormanagemet.Contractor.Magement.DTO.StockDto.StockUsageResponse;
-import com.contractormanagemet.Contractor.Magement.DTO.StockDto.UseStockRequest;
+import com.contractormanagemet.Contractor.Magement.DTO.StockDto.*;
 import com.contractormanagemet.Contractor.Magement.Entity.Product;
 import com.contractormanagemet.Contractor.Magement.Entity.StockUsage;
 import com.contractormanagemet.Contractor.Magement.Service.ProductService;
@@ -37,8 +34,8 @@ public class ProductController {
     @PostMapping("/{id}/add-stock")
     public ResponseEntity<Product> addStock(
             @PathVariable("id")  Long id,
-            @RequestParam String quantityString,
-            @RequestParam double price)
+            @RequestParam("quantityString") String quantityString,
+            @RequestParam("price") double price)
              {
         return ResponseEntity.ok(productService.addStock(id, quantityString,price));
     }
@@ -95,4 +92,8 @@ public class ProductController {
     }
 
 
+    @GetMapping("/{id}/stock-in-history")
+    public ResponseEntity<List<StockAdditionResponse>> getStockInHistory(@PathVariable("id")  Long id){
+        return ResponseEntity.ok(productService.stockAdditionHistory(id));
+    }
 }

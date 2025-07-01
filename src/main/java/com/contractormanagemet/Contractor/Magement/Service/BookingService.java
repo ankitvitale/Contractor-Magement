@@ -188,7 +188,9 @@ public class BookingService {
             customer.setPhoneNumber(customerDto.getPhoneNumber());
             customer.setAgentName(customerDto.getAgentName());
             customer.setBrokerage(customerDto.getBrokerage());
-
+            customer.setLoan(customerDto.getLoan());
+            customer.setLoanAmount(customerDto.getLoanAmount());
+            customer.setBankName(customerDto.getBankName());
             Customer savedCustomer = customerRepository.save(customer);
             existingBooking.setCustomer(savedCustomer);
         }
@@ -201,7 +203,6 @@ public class BookingService {
     public Booking getBookingByCoustomerId(Long id) {
         return bookingRepository.findBycustomer_id(id);
     }
-
     public Booking cancelFlatBooking(Long bookingId) {
         if (bookingId == null) {
             throw new IllegalArgumentException("Booking ID cannot be null.");

@@ -2,13 +2,17 @@ package com.contractormanagemet.Contractor.Magement.Service;
 
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductRequest;
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductResponse;
+import com.contractormanagemet.Contractor.Magement.DTO.StockDto.StockAdditionResponse;
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.StockUsageResponse;
 import com.contractormanagemet.Contractor.Magement.Entity.Product;
 import com.contractormanagemet.Contractor.Magement.Entity.Project;
+import com.contractormanagemet.Contractor.Magement.Entity.StockAddition;
 import com.contractormanagemet.Contractor.Magement.Entity.StockUsage;
 import com.contractormanagemet.Contractor.Magement.Repository.ProductRepository;
 import com.contractormanagemet.Contractor.Magement.Repository.ProjectRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.StockAdditionRepository;
 import com.contractormanagemet.Contractor.Magement.Repository.StockUsageRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,10 @@ public class ProductService {
     @Autowired private ProductRepository productRepository;
     @Autowired private StockUsageRepository usageRepository;
     @Autowired private ProjectRepository projectRepository;
+
+    @Autowired
+    private StockAdditionRepository stockAdditionRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
 
@@ -105,7 +113,18 @@ public Product createProduct(ProductRequest request) {
         product.setProject(project);
     }
 
-    return productRepository.save(product);
+
+    Product saveProduct =  productRepository.save(product);
+
+    StockAddition stockAddition = new StockAddition();
+    stockAddition.setProduct(saveProduct);
+    stockAddition.setAddedAt(LocalDateTime.now());
+    stockAddition.setPriceAdded(saveProduct.getPrice());
+    stockAddition.setQuantityAddedValue(saveProduct.getTotalQuantityValue());
+
+    stockAdditionRepository.save(stockAddition);
+
+    return saveProduct;
 }
 
     private int extractNumericValue(String input) {
@@ -117,6 +136,8 @@ public Product createProduct(ProductRequest request) {
         }
     }
 
+
+    @Transactional
     public Product addStock(Long productId, String quantityString,Double price) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -125,11 +146,20 @@ public Product createProduct(ProductRequest request) {
         int updatedQuantity = product.getTotalQuantityValue() + quantityToAdd;
         double totalprice=product.getPrice()+price;
 
+
+        StockAddition stockAddition = new StockAddition();
+        stockAddition.setProduct(product);
+        stockAddition.setAddedAt(LocalDateTime.now());
+        stockAddition.setPriceAdded(price);
+        stockAddition.setQuantityAddedValue(quantityToAdd);
+
         String unit = quantityString.replaceAll("[0-9]", "").trim();
 
         product.setTotalQuantityValue(updatedQuantity);
         product.setTotalQuantityString(updatedQuantity + " " + unit);
         product.setPrice(totalprice);
+
+        stockAdditionRepository.save(stockAddition);
 
         return productRepository.save(product);
     }
@@ -261,6 +291,22 @@ public Product createProduct(ProductRequest request) {
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+
+    public List<StockAdditionResponse> stockAdditionHistory(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        return product.getStockAdditions().stream()
+                .map(stockAddition -> {
+                    StockAdditionResponse stockAdditionResponse = new StockAdditionResponse();
+                    stockAdditionResponse.setId(stockAddition.getStockAdditionId());
+                    stockAdditionResponse.setAddedAt(LocalDateTime.now());
+                    stockAdditionResponse.setPriceAdded(stockAddition.getPriceAdded());
+                    stockAdditionResponse.setQuantityAddedValue(stockAddition.getQuantityAddedValue());
+                    return stockAdditionResponse;
+                }).collect(Collectors.toList());
     }
 
 }

@@ -32,6 +32,10 @@ public class Product {
   //  @JoinColumn(name = "project_id")
     private Project project;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("product") // prevent circular reference
+    private List<StockAddition> stockAdditions = new ArrayList<>();
+
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -70,7 +74,17 @@ public class Product {
         return totalQuantityValue - getUsedQuantity();
     }
 
-    @Override
+    public List<StockAddition> getStockAdditions() {
+        return stockAdditions;
+    }
+
+    public void setStockAdditions(List<StockAddition> stockAdditions) {
+        this.stockAdditions = stockAdditions;
+    }
+
+
+
+    //    @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
@@ -81,6 +95,7 @@ public class Product {
                 ", productAddOnDate=" + productAddOnDate +
                 ", usages=" + usages +
                 ", project=" + project +
+                ", stockAdditions="+stockAdditions+
                 '}';
     }
 }
