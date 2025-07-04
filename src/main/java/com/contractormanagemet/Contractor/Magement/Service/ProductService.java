@@ -35,64 +35,6 @@ public class ProductService {
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
 
-    //    public ProductResponse createProduct(ProductRequest request) {
-//        Product product = new Product();
-//        product.setName(request.getName());
-//        product.setPrice(request.getPrice());
-//        product.setTotalQuantityString(request.getTotalQuantityString());
-//        product.setProductAddOnDate(request.getProductAddOnDate());
-//
-//        // Extract numeric quantity
-//        int quantityValue = extractNumericValue(request.getTotalQuantityString());
-//        product.setTotalQuantityValue(quantityValue);
-//
-//        if (request.getProjectId() != null) {
-//            Project project = projectRepository.findById(request.getProjectId())
-//                    .orElseThrow(() -> new RuntimeException("Project not found"));
-//            product.setProject(project);
-//        }
-//
-//        product = productRepository.save(product);
-//
-//        return mapToResponse(product);
-//    }
-//
-//private ProductResponse mapToResponse(Product product) {
-//    int used = product.getUsages().stream().mapToInt(StockUsage::getQuantityUsed).sum();
-//    int remaining = product.getTotalQuantityValue() - used;
-//
-//    List<StockUsageResponse> usageResponses = product.getUsages().stream()
-//            .map(usage -> {
-//                StockUsageResponse usageResponse = new StockUsageResponse();
-//                usageResponse.setId(usage.getId());
-//                usageResponse.setQuantityUsed(usage.getQuantityUsed());
-//                usageResponse.setUsedAt(usage.getUsedAt());
-//                return usageResponse;
-//            })
-//            .collect(Collectors.toList());
-//
-//    ProductResponse.ProjectSummary projectSummary = null;
-//    if (product.getProject() != null) {
-//        projectSummary = new ProductResponse.ProjectSummary(
-//                product.getProject().getId(),
-//                product.getProject().getName()
-//        );
-//    }
-//
-//    return new ProductResponse(
-//            product.getId(),
-//            product.getName(),
-//            product.getPrice(),
-//            product.getTotalQuantityString(),
-//            product.getTotalQuantityValue(),
-//            product.getProductAddOnDate(),
-//            usageResponses,  // <-- pass mapped List<StockUsageResponse>
-//            projectSummary,
-//            used,
-//            remaining
-//    );
-//}
-//
 public Product createProduct(ProductRequest request) {
     Product product = new Product();
     product.setName(request.getName());
@@ -188,7 +130,7 @@ public Product createProduct(ProductRequest request) {
     }
 
 
-    public List<StockUsageResponse> getUsageHistory(Long productId) {
+    public List<StockUsageResponse>  getUsageHistory(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 

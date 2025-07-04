@@ -95,6 +95,8 @@ public class ContractorController {
         return ResponseEntity.ok(contractors);
     }
 
+
+
     @GetMapping("/Contractor/{id}")
     @PreAuthorize("hasAnyRole('Admin','AppUser')")
     public ResponseEntity<AllContractorResponseDto> getContractorById(@PathVariable("id") Long id) {
