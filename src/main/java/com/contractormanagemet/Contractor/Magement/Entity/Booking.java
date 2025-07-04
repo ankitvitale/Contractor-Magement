@@ -60,6 +60,7 @@ public class Booking implements Serializable {
     @Column(name = "booking_status")
     private BookingStatus bookingStatus;
 
+    private String updatedBy;
 
 //
 
@@ -198,6 +199,14 @@ public class Booking implements Serializable {
 
     public LocalDate getBookedOn() {
         return this.bookedOn;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public Booking bookedOn(LocalDate bookedOn) {

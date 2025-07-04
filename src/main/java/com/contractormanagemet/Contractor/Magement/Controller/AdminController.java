@@ -31,8 +31,29 @@ public class AdminController {
         return userService.registerAdmin(admin);
     }
 
+    @PostMapping("/registerEmployee")
+    @PreAuthorize("hasRole('Admin')")
+    public Employee registerNewEmployee(@RequestBody Employee employee){
+        return userService.registerEmployee(employee);
+    }
 
-
+    @GetMapping("/GetAllEmployee")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<Employee>> getAllEmployee() {
+        List<Employee> employees = userService.getAllEmployee();
+        return ResponseEntity.ok(employees);
+    }
+    @PostMapping("/registerSubAdmin")
+    @PreAuthorize("hasRole('Admin')")
+    public SubAdmin registerNewSubAdmin(@RequestBody SubAdmin subAdmin){
+        return userService.registerSubAdmin(subAdmin);
+    }
+    @GetMapping("/GetAllSubAdmin")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<SubAdmin>> getAllAsubAdmin(){
+        List<SubAdmin> subAdmins=userService.getAllSubAdmin();
+        return ResponseEntity.ok(subAdmins);
+    }
     @PostMapping("/registerSuperisor")
     public ResponseEntity<RequestSuperisor> registerSuperisor(@RequestBody RequestSuperisor dto) {
         Superisor registered = userService.registerSuperisor(dto);
@@ -57,11 +78,6 @@ public class AdminController {
         return ResponseEntity.ok(allowedProject);
     }
 
-//    @GetMapping("/all-supervisors")
-//    @PreAuthorize("hasRole('Admin')")
-//    public List<RequestSuperisor> getAllSupervisors() {
-//        return userService.getAllSupervisors();
-//    }
 
     @PutMapping("/releaseSiteSupervisor/{userId}/{projectId}")
     @PreAuthorize("hasRole('Admin')")
@@ -69,4 +85,7 @@ public class AdminController {
         Project updatedProject = projectService.releaseSiteSupervisor(userId, projectId);
         return ResponseEntity.ok(updatedProject);
     }
+
+
+
 }

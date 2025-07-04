@@ -22,7 +22,7 @@ public class ResidencyController {
     private ResidencyService residencyService;
 
     @PostMapping("/createResidency")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Residency> createResidency(@RequestBody ResidencyRequestDto residencyDto){
         Residency createResidency= residencyService.createResidency(residencyDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createResidency);
@@ -30,14 +30,14 @@ public class ResidencyController {
     }
 
     @GetMapping("/allResidency")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<Residency>> getAllResidencies() {
         List<Residency> residencies = residencyService.getAllResidencies();
         return ResponseEntity.ok(residencies);
     }
 
     @GetMapping("/allResidencybyid/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Residency> getResidencyById(@PathVariable("id") Long id) {
         Residency residency = residencyService.getResidencyById(id);
         return ResponseEntity.ok(residency);
@@ -55,7 +55,7 @@ public class ResidencyController {
     }
 
     @DeleteMapping("/deleteResidency/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Residency> deleteResidency(@PathVariable("id")  Long id){
         Residency residency=residencyService.deleteResidency(id);
         return ResponseEntity.ok(residency);
@@ -63,14 +63,14 @@ public class ResidencyController {
     }
 
     @GetMapping("/residenciesByProject/{projectId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<Residency>> getResidenciesByProject(@PathVariable("projectId") Long projectId) {
         List<Residency> residencies = residencyService.getResidenciesByProject(projectId);
         return ResponseEntity.ok(residencies);
     }
 
     @GetMapping("/count")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Map<Long, Map<String, Long>>> countResidenciesByProjectAndStatus() {
         Map<Long, Map<String, Long>> counts = residencyService.countResidenciesByProjectAndStatus();
         return ResponseEntity.ok(counts);

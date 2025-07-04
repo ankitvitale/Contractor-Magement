@@ -4,18 +4,23 @@ package com.contractormanagemet.Contractor.Magement.Service;
 import com.contractormanagemet.Contractor.Magement.DTO.StructureContractorDto.ContractorListWithTotalDto;
 import com.contractormanagemet.Contractor.Magement.DTO.StructureContractorDto.StructureContractorRequestDto;
 import com.contractormanagemet.Contractor.Magement.DTO.StructureContractorDto.StructureContractorResponseDto;
+import com.contractormanagemet.Contractor.Magement.Entity.Employee;
 import com.contractormanagemet.Contractor.Magement.Entity.Project;
 import com.contractormanagemet.Contractor.Magement.Entity.StructureContractor;
+import com.contractormanagemet.Contractor.Magement.Entity.SubAdmin;
+import com.contractormanagemet.Contractor.Magement.Repository.EmployeeRepository;
 import com.contractormanagemet.Contractor.Magement.Repository.ProjectRepository;
 import com.contractormanagemet.Contractor.Magement.Repository.StructureContractorRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.SubAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-    public class StructureContractorService {
+public class StructureContractorService {
 
 
     @Autowired
@@ -23,6 +28,11 @@ import java.util.stream.Collectors;
 
     @Autowired
     private ProjectRepository projectRepo;
+
+    @Autowired
+    private SubAdminRepository subAdminRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public StructureContractorResponseDto createContractor(StructureContractorRequestDto dto) {
         Project project = projectRepo.findById(dto.getProjectId())
@@ -55,6 +65,7 @@ import java.util.stream.Collectors;
         dto.setAmount(contractor.getAmount());
         dto.setProjectId(contractor.getProject().getId());
         dto.setProjectName(contractor.getProject().getName());
+        dto.setUpdatedBy(contractor.getUpdatedBy());
         return dto;
     }
 
@@ -76,6 +87,24 @@ import java.util.stream.Collectors;
     }
 
 
+//    public StructureContractorResponseDto updateContractor(Long id, StructureContractorRequestDto dto) {
+//        StructureContractor contractor = contractorRepo.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Contractor not found"));
+//
+//        Project project = projectRepo.findById(dto.getProjectId())
+//                .orElseThrow(() -> new RuntimeException("Project not found"));
+//
+//        contractor.setPayableName(dto.getPayableName());
+//        contractor.setRemark(dto.getRemark());
+//        contractor.setDate(dto.getDate());
+//        contractor.setAmount(dto.getAmount());
+//        contractor.setProject(project);
+//
+//        StructureContractor updated = contractorRepo.save(contractor);
+//        return toDto(updated);
+//    }
+
+
     public StructureContractorResponseDto updateContractor(Long id, StructureContractorRequestDto dto) {
         StructureContractor contractor = contractorRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contractor not found"));
@@ -83,15 +112,44 @@ import java.util.stream.Collectors;
         Project project = projectRepo.findById(dto.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
+        // Update contractor fields
         contractor.setPayableName(dto.getPayableName());
         contractor.setRemark(dto.getRemark());
         contractor.setDate(dto.getDate());
         contractor.setAmount(dto.getAmount());
         contractor.setProject(project);
 
+        // 🔐 Get current user info
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail;
+
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = "Admin (" + email + ")";
+        } else {
+            fullNameWithEmail = "Unknown User (" + email + ")";
+        }
+
+        // Set updatedBy
+        contractor.setUpdatedBy(fullNameWithEmail);
+
+        // Save and return DTO
         StructureContractor updated = contractorRepo.save(contractor);
         return toDto(updated);
     }
+
 
     public void deleteContractor(Long id) {
         if (!contractorRepo.existsById(id)) {

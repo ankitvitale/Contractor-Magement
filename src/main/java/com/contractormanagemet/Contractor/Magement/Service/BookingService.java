@@ -3,19 +3,14 @@ package com.contractormanagemet.Contractor.Magement.Service;
 
 import com.contractormanagemet.Contractor.Magement.DTO.BookingDto.*;
 import com.contractormanagemet.Contractor.Magement.DTO.CustomerDto.CustomerRequestDto;
-import com.contractormanagemet.Contractor.Magement.Entity.Booking;
-import com.contractormanagemet.Contractor.Magement.Entity.BookingInstallment;
-import com.contractormanagemet.Contractor.Magement.Entity.Customer;
-import com.contractormanagemet.Contractor.Magement.Entity.Residency;
+import com.contractormanagemet.Contractor.Magement.Entity.*;
 import com.contractormanagemet.Contractor.Magement.Entity.enumeration.AvailabilityStatus;
 import com.contractormanagemet.Contractor.Magement.Entity.enumeration.BookingStatus;
-import com.contractormanagemet.Contractor.Magement.Repository.BookingInstallmentRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.BookingRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.CustomerRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.ResidencyRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,6 +32,11 @@ public class BookingService {
 
     @Autowired
     private BookingInstallmentRepository bookingInstallmentRepository;
+
+    @Autowired
+    private SubAdminRepository subAdminRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public Booking createFlatBooking(BookingRequestDto bookingDto) {
         if (bookingDto == null) {
@@ -124,6 +124,7 @@ public class BookingService {
             installmentDTO.setInstallmentAmount(installment.getInstallmentAmount());
             installmentDTO.setInstallmentStatus(installment.getInstallmentStatus());
             installmentDTO.setRemark(installment.getRemark());
+            installmentDTO.setUpdatedBy(installment.getUpdatedBy());
 
             installmentDTOs.add(installmentDTO);
         }
@@ -138,6 +139,59 @@ public class BookingService {
 
         return dto;
     }
+
+//    public BookingSummaryDTO getBookingSummary(Long id) {
+//        Booking booking = bookingRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Booking with ID " + id + " not found"));
+//
+//        BookingSummaryDTO dto = new BookingSummaryDTO();
+//
+//        // Customer name (assuming not null)
+//        dto.setCustomerName(booking.getCustomer() != null ? booking.getCustomer().getName() : "N/A");
+//
+//        // Residency details with null checks
+//        if (booking.getResidency() != null) {
+//            dto.setResidencyName(booking.getResidency().getName());
+//            dto.setIdentifier(booking.getResidency().getIdentifier());
+//        } else {
+//            dto.setResidencyName("N/A");
+//            dto.setIdentifier("N/A");
+//        }
+//
+//        dto.setDealPrice(booking.getDealPrice());
+//        dto.setTokenAmount(booking.getTokenAmount());
+//        dto.setAgreementAmount(booking.getAgreementAmount());
+//
+//        List<BookingInstallmentDTO> installmentDTOs = new ArrayList<>();
+//
+//        for (BookingInstallment installment : booking.getBookingInstallments()) {
+//            BookingInstallmentDTO installmentDTO = new BookingInstallmentDTO();
+//            installmentDTO.setId(installment.getId());
+//            installmentDTO.setInstallmentDate(installment.getInstallmentDate());
+//            installmentDTO.setInstallmentAmount(installment.getInstallmentAmount());
+//            installmentDTO.setInstallmentStatus(installment.getInstallmentStatus());
+//            installmentDTO.setRemark(installment.getRemark());
+//
+//            installmentDTOs.add(installmentDTO);
+//        }
+//
+//        dto.setBookingInstallments(installmentDTOs);
+//
+//        // Calculate remaining amount
+//        double totalInstallmentsPaid = installmentDTOs.stream()
+//                .mapToDouble(i -> i.getInstallmentAmount() != null ? i.getInstallmentAmount() : 0.0)
+//                .sum();
+//
+//        dto.setRemainingAmount(
+//                (dto.getDealPrice() != null ? dto.getDealPrice() : 0.0)
+//                        - (dto.getTokenAmount() != null ? dto.getTokenAmount() : 0.0)
+//                        - (dto.getAgreementAmount() != null ? dto.getAgreementAmount() : 0.0)
+//                        - totalInstallmentsPaid
+//        );
+//
+//        return dto;
+//    }
+//
 
     public List<Booking> getAllCompleteBookings() {
         return bookingRepository.findByBookingStatusAndResidency_AvailabilityStatus(BookingStatus.COMPLETE, AvailabilityStatus.BOOKED);
@@ -194,7 +248,29 @@ public class BookingService {
             Customer savedCustomer = customerRepository.save(customer);
             existingBooking.setCustomer(savedCustomer);
         }
+        // Set Updated By
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail;
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = "Admin";
+        } else {
+            fullNameWithEmail = " Edit By Admin (" + email + ")";
+        }
+
+        existingBooking.setUpdatedBy(fullNameWithEmail);
 
         // Save updated booking to the database
         return bookingRepository.save(existingBooking);
@@ -230,18 +306,69 @@ public class BookingService {
 
 
 
+//    public BookingInstallmentResponseDTO updateBookingInstallment(Long id, BookingInstallmentDTO dto) {
+//        BookingInstallment bookingInstallment = bookingInstallmentRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("BookingInstallment " + id + " Not Found"));
+//
+//        bookingInstallment.setInstallmentDate(dto.getInstallmentDate());
+//        bookingInstallment.setInstallmentAmount(dto.getInstallmentAmount());
+//        bookingInstallment.setRemark(dto.getRemark());
+//        bookingInstallment.setInstallmentStatus(dto.getInstallmentStatus());
+//
+//        BookingInstallment updated = bookingInstallmentRepository.save(bookingInstallment);
+//
+//        // Convert to DTO
+//        BookingInstallmentResponseDTO response = new BookingInstallmentResponseDTO();
+//        response.setId(updated.getId());
+//        response.setInstallmentDate(updated.getInstallmentDate());
+//        response.setInstallmentAmount(updated.getInstallmentAmount());
+//        response.setRemark(updated.getRemark());
+//        response.setInstallmentStatus(updated.getInstallmentStatus());
+//        response.setBookingId(updated.getBooking().getId());
+//
+//        return response;
+//    }
+
+
     public BookingInstallmentResponseDTO updateBookingInstallment(Long id, BookingInstallmentDTO dto) {
         BookingInstallment bookingInstallment = bookingInstallmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("BookingInstallment " + id + " Not Found"));
 
+        // Update fields
         bookingInstallment.setInstallmentDate(dto.getInstallmentDate());
         bookingInstallment.setInstallmentAmount(dto.getInstallmentAmount());
         bookingInstallment.setRemark(dto.getRemark());
         bookingInstallment.setInstallmentStatus(dto.getInstallmentStatus());
 
+
+        // Set Updated By
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail;
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = "Admin";
+        } else {
+            fullNameWithEmail = "Edit By Admin (" + email + ")";
+        }
+
+        bookingInstallment.setUpdatedBy(fullNameWithEmail);
+
+        // Save updated entity
         BookingInstallment updated = bookingInstallmentRepository.save(bookingInstallment);
 
-        // Convert to DTO
+        // Convert to Response DTO
         BookingInstallmentResponseDTO response = new BookingInstallmentResponseDTO();
         response.setId(updated.getId());
         response.setInstallmentDate(updated.getInstallmentDate());
@@ -270,6 +397,8 @@ public class BookingService {
         dto.setInstallmentDate(bookingInstallment.getInstallmentDate());
         dto.setInstallmentStatus(bookingInstallment.getInstallmentStatus());
         dto.setRemark(bookingInstallment.getRemark());
+        dto.setUpdatedBy(bookingInstallment.getUpdatedBy());
+
 
         return dto;
     }

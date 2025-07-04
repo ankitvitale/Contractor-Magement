@@ -12,6 +12,8 @@ public class BookingInstallmentDTO {
     private String remark;
     private InstallmentStatus installmentStatus;
 
+    private String updatedBy;
+
     public BookingInstallmentDTO(){}
     public BookingInstallmentDTO(Long id, LocalDate installmentDate, Double installmentAmount, String remark, InstallmentStatus installmentStatus) {
         this.id = id;
@@ -27,6 +29,7 @@ public class BookingInstallmentDTO {
         this.installmentAmount = bookingInstallment.getInstallmentAmount();
         this.installmentStatus = bookingInstallment.getInstallmentStatus();
         this.remark = bookingInstallment.getRemark();
+        this.updatedBy=bookingInstallment.getUpdatedBy();
     }
 
     public Long getId() {
@@ -67,5 +70,13 @@ public class BookingInstallmentDTO {
 
     public void setInstallmentStatus(InstallmentStatus installmentStatus) {
         this.installmentStatus = installmentStatus;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

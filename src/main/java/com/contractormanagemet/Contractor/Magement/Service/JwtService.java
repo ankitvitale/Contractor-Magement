@@ -1,11 +1,10 @@
 package com.contractormanagemet.Contractor.Magement.Service;
 
 
-import com.contractormanagemet.Contractor.Magement.Entity.Admin;
-import com.contractormanagemet.Contractor.Magement.Entity.JwtRequest;
-import com.contractormanagemet.Contractor.Magement.Entity.JwtResponse;
-import com.contractormanagemet.Contractor.Magement.Entity.Superisor;
+import com.contractormanagemet.Contractor.Magement.Entity.*;
 import com.contractormanagemet.Contractor.Magement.Repository.AdminRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.EmployeeRepository;
+import com.contractormanagemet.Contractor.Magement.Repository.SubAdminRepository;
 import com.contractormanagemet.Contractor.Magement.Repository.SuperisorRepository;
 import com.contractormanagemet.Contractor.Magement.Security.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,10 @@ public class JwtService implements UserDetailsService {
 
     @Autowired
     private SuperisorRepository supervisorDao;
-
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private SubAdminRepository subAdminRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -51,12 +53,19 @@ public class JwtService implements UserDetailsService {
         // Check if the email belongs to Admin or Supervisor
         Admin admin = adminDao.findByEmail(email);
         Superisor supervisor = supervisorDao.findByEmail(email);
+        Employee employee= employeeRepository.findByEmail(email);
+        SubAdmin subAdmin=subAdminRepository.findByEmail(email);
 
         if (admin != null) {
-            return new JwtResponse(admin, null, newGeneratedToken);
+            return new JwtResponse(admin, null, null,null,newGeneratedToken);
         } else if (supervisor != null) {
-            return new JwtResponse(null, supervisor, newGeneratedToken);
-        } else {
+            return new JwtResponse(null, supervisor,null,null, newGeneratedToken);
+        } else if(employee !=null){
+            return new JwtResponse(null,null,employee,null,newGeneratedToken);
+        }else if(subAdmin!=null){
+            return new JwtResponse(null,null,null,subAdmin,newGeneratedToken);
+        }
+        else {
             throw new Exception("User not found with email: " + email);
         }
     }
@@ -69,6 +78,8 @@ public class JwtService implements UserDetailsService {
 
         Admin admin = adminDao.findByEmail(email);
         Superisor supervisor = supervisorDao.findByEmail(email);
+        Employee employee= employeeRepository.findByEmail(email);
+        SubAdmin subAdmin=subAdminRepository.findByEmail(email);
 
         Collection<GrantedAuthority> authorities = new HashSet<>();
         String password = null;
@@ -85,6 +96,20 @@ public class JwtService implements UserDetailsService {
                     authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
             );
             password = supervisor.getPassword();
+        }
+        if(employee !=null){
+            employee.getRole().forEach(role ->
+                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getRoleName()))
+                    );
+            password = employee.getPassword(); // ✅ Fix: set the password
+
+        }
+        if(subAdmin !=null){
+            subAdmin.getRole().forEach(role ->
+                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getRoleName()))
+            );
+            password = subAdmin.getPassword(); // ✅ Fix: set the password
+
         }
 
         return new org.springframework.security.core.userdetails.User(email, password, authorities);

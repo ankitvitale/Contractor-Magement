@@ -24,6 +24,9 @@ public class BookingInstallment {
 
     @Column(name = "remark")
     private String remark;
+
+    private String updatedBy;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     @JsonIgnoreProperties(value = { "bookingInstallments" }, allowSetters = true)
@@ -76,5 +79,13 @@ public class BookingInstallment {
 
     public void setBooking(Booking booking) {
         this.booking = booking;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

@@ -52,6 +52,7 @@ public class BookingInstallmentResponseDTO {
         this.installmentStatus = installmentStatus;
     }
 
+
     public Long getBookingId() {
         return bookingId;
     }

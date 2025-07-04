@@ -1,23 +1,11 @@
 package com.contractormanagemet.Contractor.Magement.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "app_user")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
-public class  Superisor implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -30,12 +18,6 @@ public class  Superisor implements Serializable {
 
     @Column(name = "password")
     private String password;
-
-
-    @ManyToMany(mappedBy = "supervisors")
-    @JsonIgnore
-    private Set<Project> allowedSite = new HashSet<>();
-
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE", joinColumns = {
@@ -87,13 +69,4 @@ public class  Superisor implements Serializable {
     public void setRole(Set<com.contractormanagemet.Contractor.Magement.Entity.Role> role) {
         Role = role;
     }
-
-    public Set<Project> getAllowedSite() {
-        return allowedSite;
-    }
-
-    public void setAllowedSite(Set<Project> allowedSite) {
-        this.allowedSite = allowedSite;
-    }
 }
-

@@ -18,32 +18,31 @@ public class RelievingLatterController {
     private RelievingLatterService relievingLatterService;
 
     @PostMapping("/createRelievinglatter")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public RelievingLatter createRelievinglatter(@RequestBody RelievingLatter relievingLatter){
         return relievingLatterService.createRelievinglatter(relievingLatter);
     }
 
     @GetMapping("/getAllRelievingLatter")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public List<RelievingLatter> getAllRelievingLatter(){
         return relievingLatterService.getAllRelievingLatter();
     }
 
     @GetMapping("/getAllRelievingLatterbyid/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public RelievingLatter getAllRelievingLatterbyid(@PathVariable("id") long id){
         return  relievingLatterService.getAllRelievingLatterbyid(id);
     }
 
     @PutMapping("/updateRelievingLatter/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public RelievingLatter updateRelievingLatter(@PathVariable("id") Long id, @RequestBody RelievingLatter relievingLatter) {
         relievingLatter.setId(id);
         return relievingLatterService.updateRelievingLatter(relievingLatter);
     }
     @DeleteMapping("/deleteRelievingLatter/{id}")
-    @PreAuthorize("hasRole('Admin')")
-
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<String> deleteRelievingLatter(@PathVariable("id") Long id) {
         relievingLatterService.deleteRelievingLatter(id);
         return ResponseEntity.ok("Salary slip deleted successfully");

@@ -14,6 +14,8 @@ public class StructureContractor {
     private LocalDate Date;
     private Double amount;
 
+    private String updatedBy;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
@@ -58,6 +60,14 @@ public class StructureContractor {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public Project getProject() {

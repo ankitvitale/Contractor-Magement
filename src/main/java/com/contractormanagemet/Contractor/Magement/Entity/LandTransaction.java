@@ -32,6 +32,9 @@ public class LandTransaction {
     @Enumerated(EnumType.STRING)
     private InstallmentStatus status;
 
+    private String updatedBy;
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties
 
@@ -126,4 +129,13 @@ public class LandTransaction {
 //    public void setPurchaser(Person purchaser) {
 //        this.purchaser = purchaser;
 //    }
+
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

@@ -27,13 +27,13 @@ public class ProjectController {
 
 
     @PostMapping("/createProject")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Project> createProject(@RequestBody ProjectRequestDto projectRequestDto){
       Project createProject= projectService.createProject(projectRequestDto);
       return ResponseEntity.ok(createProject);
     }
     @GetMapping("/getAllProjects")
-    @PreAuthorize("hasAnyRole('Admin','Superisor')")
+    @PreAuthorize("hasAnyRole('Admin','Supervisor','SubAdmin')")
     public ResponseEntity<List<?>> getAllProject(Authentication authentication){
         String email = authentication.getName();
         List<?> projects;
@@ -41,10 +41,15 @@ public class ProjectController {
         // Check if the logged-in user is an Admin
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Admin"));
+        boolean isSubAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SubAdmin"));
 
         if (isAdmin) {
             // Admin gets all projects
             projects = projectService.getAllProjects();
+        }else if (isSubAdmin) {
+            // SubAdmin gets allowed projects based on their email
+            projects = projectService.getAllProjects();  // 🔁 You must implement this method
         } else {
             // AppUser gets only allowed sites
             projects = userService.getAllowedSitesForUser(email);
@@ -68,7 +73,7 @@ public class ProjectController {
     }
 
     @PutMapping("/updateProject/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Project> updateProject(@PathVariable("id") Long id, @RequestBody ProjectResponseDto projectResponseDto) {
 
         Project updatedProject = projectService.updateProject(id, projectResponseDto);
@@ -76,7 +81,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/deleteProject/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<?> deleteProject(@PathVariable("id") Long id) {
         try {
             projectService.deleteProject(id);

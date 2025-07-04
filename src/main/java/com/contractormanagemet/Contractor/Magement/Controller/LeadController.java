@@ -27,6 +27,7 @@ public class LeadController {
 
 
     @PostMapping("/createNewLead")
+    @PreAuthorize("hasAnyRole('Admin','Employee')")
     public ResponseEntity<Lead> addNewLead(@RequestBody Lead lead) {
         Lead savedLead = leadService.addNewLead(lead);
         return ResponseEntity.ok(savedLead);
@@ -40,20 +41,20 @@ public class LeadController {
     }
 
     @GetMapping("/getlead/{id}")
-    @PreAuthorize("hasAnyRole('Admin','Employee')")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<Lead> getLeadById(@PathVariable("id") Long id) {
         Lead lead = leadService.getLeadById(id); // Fetch the lead with logs
         return ResponseEntity.ok(lead);
     }
 
     @GetMapping("/getAllLeads")
-    @PreAuthorize("hasAnyRole('Admin','Employee')")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<List<Lead>> getAllLeads() {
         List<Lead> leads = leadService.getAllLeads();
         return ResponseEntity.ok(leads);
     }
     @DeleteMapping("/deleteLead/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<String> deleteLead(@PathVariable("id") Long id) {
         boolean isDeleted = leadService.deleteLead(id);
         if (isDeleted) {
@@ -64,19 +65,20 @@ public class LeadController {
     }
 
     @PutMapping("/updateLead/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<Lead> updateLead(@PathVariable("id") Long id, @RequestBody Lead lead) {
         Lead updatedLead = leadService.updateLead(id, lead);
         return ResponseEntity.ok(updatedLead);
     }
 
     @PostMapping("/remark/{id}/remark")
-    @PreAuthorize("hasAnyRole('Admin','Employee')")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<Lead> addRemark(@PathVariable("id") Long id, @RequestBody RemarkRequest remarkRequest) {
         Lead updatedLead = leadService.addRemark(id, remarkRequest.getRemark(), remarkRequest.getRemarkdate());
         return ResponseEntity.ok(updatedLead);
     }
     @GetMapping("/lead/alerts")
+    @PreAuthorize("hasAnyRole('Admin','Employee','SubAdmin')")
     public ResponseEntity<List<String>> getTodayAndSeventhDayAlerts() {
         List<String> alerts = leadService.getTodayCallMeAlerts();
         return ResponseEntity.ok(alerts);

@@ -9,6 +9,7 @@ import com.contractormanagemet.Contractor.Magement.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,6 +34,11 @@ public class LandService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private SubAdminRepository subAdminRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public Land createLand(LandRequestDTO landRequestDTO) {
 
@@ -213,6 +219,33 @@ public class LandService {
         existingLand.setAddress(address);
         existingLand.setOwner(owner);
         existingLand.setPurchaser(purchaser);
+
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail = null;
+
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = null; // Or use: fullNameWithEmail = "Admin";
+        } else {
+            fullNameWithEmail = "Unknown User (" + email + ")";
+            // Or optionally, log and skip setting updatedBy
+        }
+
+        existingLand.setUpdatedBy(fullNameWithEmail);
+
 
         Land updatedLand = landRepository.save(existingLand);
 
@@ -461,6 +494,32 @@ public class LandService {
         landTransaction.setChange(landTransactionDto.getChange());
         landTransaction.setMadeBy(landTransactionDto.getMadeBy());
         landTransaction.setStatus(landTransactionDto.getStatus());
+        // Get authenticated user's email
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Check if user is ADMIN
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        // Identify who made the update
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail;
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = "Admin";
+        } else {
+            fullNameWithEmail = "Unknown User (" + email + ")";
+        }
+
+        // Save the person who updated it
+        landTransaction.setUpdatedBy(fullNameWithEmail);
 
         return landTransactionRepository.save(landTransaction);
     }

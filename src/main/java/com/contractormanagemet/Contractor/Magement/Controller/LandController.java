@@ -24,34 +24,34 @@ public class LandController {
     @Autowired
     private LandService landService;
     @PostMapping("/create")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Land> createLand(@RequestBody LandRequestDTO landRequestDTO){
         Land createLand=landService.createLand(landRequestDTO);
         return ResponseEntity.ok(createLand);
     }
 
     @GetMapping("/getAllland")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<Land>> getAllLands() {
         List<Land> lands = landService.getAllLands();
         return ResponseEntity.ok(lands);
     }
 
     @GetMapping("/land/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Land> getLandById(@PathVariable("id") Long id) {
         Land lands = landService.getLandById(id);
         return ResponseEntity.ok(lands);
     }
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Land> updateLand(@PathVariable("id") Long id, @RequestBody LandRequestDTO landRequestDto) {
         Land updatedLand = landService.updateLand(id, landRequestDto);
         return ResponseEntity.ok(updatedLand);
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<String> deleteLand(@PathVariable("id") Long id) {
         landService.deleteLand(id);
         return ResponseEntity.status(HttpStatus.OK).body("Land with ID " + id + " has been deleted successfully.");
@@ -59,7 +59,7 @@ public class LandController {
 
     //partner Add Payment
     @PostMapping("/addpayment/partner/{partnerId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<LandTransaction> addpayment(@RequestBody LandTransactionDto landTransactionDto, @PathVariable("partnerId") Long partnerId) {
         LandTransaction landTransaction = landService.addPayment(landTransactionDto, partnerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(landTransaction);
@@ -67,7 +67,7 @@ public class LandController {
 
     //update partener payment
     @PutMapping("/UpdatePartner/payment/{transactionId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<LandTransaction> updatePayment(@RequestBody LandTransactionDto landTransactionDto, @PathVariable("transactionId") Long transactionId) {
         LandTransaction updatedTransaction = landService.updatePayment(landTransactionDto, transactionId);
         return ResponseEntity.ok(updatedTransaction);
@@ -75,7 +75,7 @@ public class LandController {
 
     //purchaser Add Payment
     @PostMapping("/addpayment/purchaser/{purchaserId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<LandTransaction> addPaymentToPurchaser(
             @RequestBody LandTransactionDto landTransactionDto,
             @PathVariable("purchaserId") Long purchaserId
@@ -85,13 +85,13 @@ public class LandController {
     }
 
     @GetMapping("/land/{id}/partners-with-transactions")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<PartnerWithTransactionsDto>> getPartnersWithTransactions(@PathVariable("id") Long id) {
         List<PartnerWithTransactionsDto> partners = landService.getPartnerTransactions(id);
         return ResponseEntity.ok(partners);
     }
     @GetMapping("/land/{id}/purchaser-with-transactions")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<PurchaserWithTransactionsDto> getPurchaserWithTransactions(@PathVariable("id") Long id) {
         PurchaserWithTransactionsDto purchaser = landService.getPurchaserTransaction(id);
         if (purchaser == null) {
@@ -102,7 +102,7 @@ public class LandController {
 
     //show list of Partners paymenet
     @GetMapping("/land/{landId}/partners")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<PartnerWithTransactionsDto>> getPartnersByLand(@PathVariable("landId") Long landId) {
         List<PartnerWithTransactionsDto> partners = landService.getPartnersByLandId(landId);
         return ResponseEntity.ok(partners);
@@ -110,20 +110,20 @@ public class LandController {
 
     // show the single Partner payment with single transation
     @GetMapping("/SinglePartnerPaymentById/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<LandTransactionDto> getPartnerTransactionWithId(@PathVariable("id") Long id){
         LandTransactionDto partnerWithTransactionsDto=landService.getPartnerTransactionWithId(id);
         return ResponseEntity.ok(partnerWithTransactionsDto);
     }
 
     @DeleteMapping("/partner/transaction/{transactionId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<String> deletePartnerTransaction(@PathVariable("transactionId") Long transactionId) {
         landService.deleteSinglePartnerTransaction(transactionId);
         return ResponseEntity.ok("Transaction deleted successfully.");
     }
     @GetMapping("/land/{id}/All-Partner-with-Purcher")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<LandTransactionsResponseDto> getLandTransactions(@PathVariable("id") Long id) {
         List<PartnerWithTransactionsDto> partners = landService.getPartnerTransactions(id);
         PurchaserWithTransactionsDto purchaser = landService.getPurchaserTransaction(id);
@@ -134,14 +134,14 @@ public class LandController {
     }
 
     @PostMapping("/{landId}/partners")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Land> addPartnerToLand(@PathVariable("landId") Long landId, @RequestBody PartnerDto partnerDto) {
         Land updatedLand = landService.addPartnerToLand(landId, partnerDto);
         return ResponseEntity.ok(updatedLand);
     }
 
     @GetMapping("/partner/{id}/transactions")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<PartnerWithTransactionsDto> getPartnerWithTransactions(@PathVariable("id") Long id) {
         PartnerWithTransactionsDto partner = landService.getSinglePartnerTransactions(id);
         return ResponseEntity.ok(partner);

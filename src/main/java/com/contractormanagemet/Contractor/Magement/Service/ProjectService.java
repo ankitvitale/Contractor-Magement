@@ -27,8 +27,8 @@ public class ProjectService {
     private ProductRepository productRepository;
     @Autowired
     private LandRepository landRepository;
-@Autowired
-private  ContractorRepository contractorRepository;
+    @Autowired
+    private  ContractorRepository contractorRepository;
     @Autowired
     private StructureContractorRepository structureContractorRepository;
 

@@ -40,7 +40,7 @@ public class Land implements Serializable {
     private Double totalAmount;
     @Column(name = "landAddOn_date")
     private LocalDate landAddOnDate;
-
+    private String updatedBy;
     @JsonIgnoreProperties(value = { "land" }, allowSetters = true)
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(unique = true)
@@ -151,5 +151,13 @@ public class Land implements Serializable {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

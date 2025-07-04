@@ -10,7 +10,7 @@ public class StructureContractorResponseDto {
     private Double amount;
     private Long projectId;
     private String projectName;
-
+    private String updatedBy;
     public Long getId() {
         return id;
     }
@@ -65,5 +65,13 @@ public class StructureContractorResponseDto {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

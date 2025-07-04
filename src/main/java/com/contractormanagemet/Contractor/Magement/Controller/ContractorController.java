@@ -23,7 +23,7 @@ public class ContractorController {
 
     @Autowired
     private ContractorService contractorService;
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     @PostMapping("/contractor/{projectId}")
     public ResponseEntity<Contractor> createContractor(
             @PathVariable Long projectId,
@@ -33,7 +33,7 @@ public class ContractorController {
     }
 
     @GetMapping("/contractor")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<Contractor>> getAllContractors() {
         List<Contractor> contractors = contractorService.getAllContractors();
         return ResponseEntity.ok(contractors);
@@ -49,7 +49,7 @@ public class ContractorController {
 //    }
 
     @PostMapping("/{id}/contractorInstallment")
-    @PreAuthorize("hasAnyRole('Admin','AppUser')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<AllContractorResponseDto> addContractorInstallment(
             @PathVariable Long id,
             @RequestBody List<ContractorInstallmentDto> contractorInstallments) {
@@ -60,19 +60,19 @@ public class ContractorController {
 
 
     @PostMapping("/{id}/updatCeontractorInstallment")
-    @PreAuthorize("hasAnyRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Contractor> updateOrAddContractorInstallment(@PathVariable Long id, @RequestBody List<ContractorInstallmentDto> contractorInstallments){
         Contractor updateContractorInstallment=contractorService.updateOrAddContractorInstallment(id,contractorInstallments);
         return ResponseEntity.ok(updateContractorInstallment);
     }
     @GetMapping("/getSingleInstallmentById/{id}")
-    @PreAuthorize("hasAnyRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<ContractorInstallment> getContractorInstallmentById(@PathVariable Long id){
         ContractorInstallment contractorInstallment=contractorService.getContractorInstallmentById(id);
         return   ResponseEntity.ok(contractorInstallment);
     }
     @PutMapping("/updateContractorInstallment/{contractorId}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<AllContractorResponseDto> updateContractorInstallments(
             @PathVariable Long contractorId,
             @RequestBody List<ContractorInstallmentDto> contractorInstallments) {
@@ -81,7 +81,7 @@ public class ContractorController {
     }
 
     @DeleteMapping("/deleteContractorInstallment/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Map<String, String>> deleteContractorInstallment(@PathVariable("id") Long id) {
         contractorService.deleteContractorInstallment(id);
         return ResponseEntity.ok(Collections.singletonMap("message", "Deleted successfully"));
@@ -89,14 +89,16 @@ public class ContractorController {
 
 
     @GetMapping("/{projectId}/Contractor")
-    @PreAuthorize("hasAnyRole('Admin','AppUser')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<List<AllContractorResponseDto>> getContractorByProject(@PathVariable("projectId")  Long projectId) {
         List<AllContractorResponseDto> contractors = contractorService.getContractorByProject(projectId);
         return ResponseEntity.ok(contractors);
     }
 
+
+
     @GetMapping("/Contractor/{id}")
-    @PreAuthorize("hasAnyRole('Admin','AppUser')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<AllContractorResponseDto> getContractorById(@PathVariable("id") Long id) {
         AllContractorResponseDto contractorDto = contractorService.getContractorById(id);
         return ResponseEntity.ok(contractorDto);
@@ -104,7 +106,7 @@ public class ContractorController {
 
 
     @DeleteMapping("/deleteContractor/{id}")
-    @PreAuthorize("hasAnyRole('Admin','AppUser')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<AllContractorResponseDto> deleteContractor(@PathVariable("id") Long id) {
         AllContractorResponseDto dto = contractorService.deleteContractor(id);
         return ResponseEntity.ok(dto);

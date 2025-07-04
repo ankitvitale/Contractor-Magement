@@ -20,21 +20,21 @@ public class PossessionLetterController {
        PossessionLetterService possessionLetterService;
 
         @PostMapping("/createPossessionLetter")
-        @PreAuthorize("hasRole('Admin')")
+        @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
         public ResponseEntity<PossessionLetter> createPossessionLetter(@RequestBody PossessionLetter possessionLetter){
             PossessionLetter possessionLetter1=possessionLetterService.createPossessionLetter(possessionLetter);
             return ResponseEntity.ok(possessionLetter1);
        }
 
       @GetMapping("/PossessionLetter")
-       @PreAuthorize("hasRole('Admin')")
+      @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
        public List<PossessionLetter> getAllPossessionLetter(){
             return possessionLetterService.getAllPossessionLetter();
 
        }
 
     @GetMapping("/PossessionLetter/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<PossessionLetter> getPossessionLetterById(@PathVariable("id") Long id) {
         Optional<PossessionLetter> possessionLetter = possessionLetterService.getPossessionLetterById(id);
         if (possessionLetter.isPresent()) {
@@ -45,13 +45,13 @@ public class PossessionLetterController {
     }
 
     @DeleteMapping("/PossessionLetter/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<Void> deletePossessionLetter(@PathVariable("id")  Long id) {
         possessionLetterService.deletePossessionLetterById(id);
         return ResponseEntity.noContent().build(); // HTTP 204 No Content
     }
     @PutMapping("/PossessionLetter/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','SubAdmin')")
     public ResponseEntity<PossessionLetter> updatePossessionLetter(
             @PathVariable("id")  Long id,
             @RequestBody PossessionLetter updatedPossessionLetter
