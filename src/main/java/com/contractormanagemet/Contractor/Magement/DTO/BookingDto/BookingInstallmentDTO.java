@@ -4,6 +4,7 @@ import com.contractormanagemet.Contractor.Magement.Entity.BookingInstallment;
 import com.contractormanagemet.Contractor.Magement.Entity.enumeration.InstallmentStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BookingInstallmentDTO {
     private Long id;
@@ -13,6 +14,8 @@ public class BookingInstallmentDTO {
     private InstallmentStatus installmentStatus;
 
     private String updatedBy;
+
+    private LocalDateTime updatedAt; // <-- Add this field
 
     public BookingInstallmentDTO(){}
     public BookingInstallmentDTO(Long id, LocalDate installmentDate, Double installmentAmount, String remark, InstallmentStatus installmentStatus) {
@@ -78,5 +81,13 @@ public class BookingInstallmentDTO {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

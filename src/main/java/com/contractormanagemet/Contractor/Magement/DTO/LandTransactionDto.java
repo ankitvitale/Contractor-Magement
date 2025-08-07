@@ -9,6 +9,7 @@ import com.contractormanagemet.Contractor.Magement.Entity.enumeration.Transactio
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class LandTransactionDto {
 
@@ -28,7 +29,9 @@ public class LandTransactionDto {
 
     @Enumerated(EnumType.STRING)
     private InstallmentStatus status;
+    private String updatedBy;
 
+    private LocalDateTime updatedAt;
     public LandTransactionDto(){}
     public LandTransactionDto(Long id, LocalDate transactionDate, Double transactionAmount, String note, TransactionChange change, TransactionMadeBy madeBy, InstallmentStatus status, Partner partnerId, Person personId) {
         this.id = id;
@@ -94,6 +97,22 @@ public class LandTransactionDto {
 
     public void setStatus(InstallmentStatus status) {
         this.status = status;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

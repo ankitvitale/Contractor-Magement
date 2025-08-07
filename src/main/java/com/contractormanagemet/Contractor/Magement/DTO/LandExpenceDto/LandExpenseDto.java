@@ -1,6 +1,7 @@
 package com.contractormanagemet.Contractor.Magement.DTO.LandExpenceDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class LandExpenseDto {
 
@@ -9,14 +10,23 @@ public class LandExpenseDto {
     private Double amount;
     private LocalDate date;
     private String updatedBy;
+    private LocalDateTime updatedAt; // <-- Add this field
+//
+//    public LandExpenseDto(Long id, String expenseName, Double amount, LocalDate date, String updatedBy) {
+//        this.id = id;
+//        this.expenseName = expenseName;
+//        this.amount = amount;
+//        this.date = date;
+//        this.updatedBy = updatedBy;
+//    }
 
-
-    public LandExpenseDto(Long id, String expenseName, Double amount, LocalDate date, String updatedBy) {
+    public LandExpenseDto(Long id, String expenseName, Double amount, LocalDate date, String updatedBy, LocalDateTime updatedAt) {
         this.id = id;
         this.expenseName = expenseName;
         this.amount = amount;
         this.date = date;
         this.updatedBy = updatedBy;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -57,5 +67,13 @@ public class LandExpenseDto {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

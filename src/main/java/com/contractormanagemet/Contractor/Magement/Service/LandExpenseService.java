@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,26 +44,13 @@ public class LandExpenseService {
 
         LandExpense saved = landExpenseRepository.save(expense);
 
-        return new LandExpenseDto(saved.getId(), saved.getExpenseName(), saved.getAmount(), saved.getDate(),saved.getUpdatedBy());
+        return new LandExpenseDto(saved.getId(), saved.getExpenseName(), saved.getAmount(), saved.getDate(),saved.getUpdatedBy(),saved.getUpdatedAt());
     }
 
 
     public List<LandExpense> getExpensesByLandId(Long landId) {
         return landExpenseRepository.findByLandId(landId);
     }
-
-//    public LandExpense updateExpense(Long id, LandExpenseDto updatedExpense) {
-//        LandExpense existing = landExpenseRepository.findById(id).orElse(null);
-//        if (existing == null) {
-//            return null;
-//        }
-//
-//        existing.setExpenseName(updatedExpense.getExpenseName());
-//        existing.setAmount(updatedExpense.getAmount());
-//        existing.setDate(updatedExpense.getDate()); // ✅ Set date too
-//
-//        return landExpenseRepository.save(existing);
-//    }
 
 
     public LandExpense updateExpense(Long id, LandExpenseDto updatedExpense) {
@@ -101,7 +89,7 @@ public class LandExpenseService {
 
         // Set updatedBy
         existing.setUpdatedBy(fullNameWithEmail);
-
+        existing.setUpdatedAt(LocalDateTime.now());
         return landExpenseRepository.save(existing);
     }
 
@@ -118,7 +106,7 @@ public class LandExpenseService {
         List<LandExpense> expenses = landExpenseRepository.findByLandId(landId);
 
         List<LandExpenseDto> expenseDtos = expenses.stream()
-                .map(e -> new LandExpenseDto(e.getId(), e.getExpenseName(), e.getAmount(),e.getDate(),e.getUpdatedBy()))
+                .map(e -> new LandExpenseDto(e.getId(), e.getExpenseName(), e.getAmount(),e.getDate(),e.getUpdatedBy(),e.getUpdatedAt()))
                 .collect(Collectors.toList());
 
         double total = expenseDtos.stream()

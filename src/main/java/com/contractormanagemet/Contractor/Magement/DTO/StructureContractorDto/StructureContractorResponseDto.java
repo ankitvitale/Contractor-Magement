@@ -1,6 +1,7 @@
 package com.contractormanagemet.Contractor.Magement.DTO.StructureContractorDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class StructureContractorResponseDto {
     private Long id;
@@ -11,6 +12,8 @@ public class StructureContractorResponseDto {
     private Long projectId;
     private String projectName;
     private String updatedBy;
+
+    private LocalDateTime updatedAt;
     public Long getId() {
         return id;
     }
@@ -74,4 +77,7 @@ public class StructureContractorResponseDto {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

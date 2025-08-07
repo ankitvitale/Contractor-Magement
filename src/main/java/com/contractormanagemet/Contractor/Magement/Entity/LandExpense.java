@@ -3,6 +3,7 @@ package com.contractormanagemet.Contractor.Magement.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class LandExpense {
@@ -17,6 +18,8 @@ public class LandExpense {
 
     private LocalDate date = LocalDate.now();
     private String updatedBy;
+
+    private LocalDateTime updatedAt; // <-- Add this field
     @ManyToOne
     @JoinColumn(name = "land_id")
     private Land land;
@@ -63,7 +66,8 @@ public class LandExpense {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
-
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public Land getLand() {
         return land;
     }

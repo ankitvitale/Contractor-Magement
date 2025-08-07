@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class LandTransaction {
@@ -34,6 +35,7 @@ public class LandTransaction {
 
     private String updatedBy;
 
+    private LocalDateTime updatedAt; // <-- Add this field
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties
@@ -129,7 +131,8 @@ public class LandTransaction {
 //    public void setPurchaser(Person purchaser) {
 //        this.purchaser = purchaser;
 //    }
-
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public String getUpdatedBy() {
         return updatedBy;

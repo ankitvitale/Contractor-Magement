@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -125,6 +126,8 @@ public class BookingService {
             installmentDTO.setInstallmentStatus(installment.getInstallmentStatus());
             installmentDTO.setRemark(installment.getRemark());
             installmentDTO.setUpdatedBy(installment.getUpdatedBy());
+            installmentDTO.setUpdatedAt(installment.getUpdatedAt()
+            );
 
             installmentDTOs.add(installmentDTO);
         }
@@ -271,6 +274,7 @@ public class BookingService {
         }
 
         existingBooking.setUpdatedBy(fullNameWithEmail);
+        existingBooking.setUpdatedAt(LocalDateTime.now());
 
         // Save updated booking to the database
         return bookingRepository.save(existingBooking);
@@ -305,29 +309,6 @@ public class BookingService {
     }
 
 
-
-//    public BookingInstallmentResponseDTO updateBookingInstallment(Long id, BookingInstallmentDTO dto) {
-//        BookingInstallment bookingInstallment = bookingInstallmentRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("BookingInstallment " + id + " Not Found"));
-//
-//        bookingInstallment.setInstallmentDate(dto.getInstallmentDate());
-//        bookingInstallment.setInstallmentAmount(dto.getInstallmentAmount());
-//        bookingInstallment.setRemark(dto.getRemark());
-//        bookingInstallment.setInstallmentStatus(dto.getInstallmentStatus());
-//
-//        BookingInstallment updated = bookingInstallmentRepository.save(bookingInstallment);
-//
-//        // Convert to DTO
-//        BookingInstallmentResponseDTO response = new BookingInstallmentResponseDTO();
-//        response.setId(updated.getId());
-//        response.setInstallmentDate(updated.getInstallmentDate());
-//        response.setInstallmentAmount(updated.getInstallmentAmount());
-//        response.setRemark(updated.getRemark());
-//        response.setInstallmentStatus(updated.getInstallmentStatus());
-//        response.setBookingId(updated.getBooking().getId());
-//
-//        return response;
-//    }
 
 
     public BookingInstallmentResponseDTO updateBookingInstallment(Long id, BookingInstallmentDTO dto) {
@@ -364,7 +345,7 @@ public class BookingService {
         }
 
         bookingInstallment.setUpdatedBy(fullNameWithEmail);
-
+        bookingInstallment.setUpdatedAt(LocalDateTime.now());
         // Save updated entity
         BookingInstallment updated = bookingInstallmentRepository.save(bookingInstallment);
 
@@ -398,6 +379,7 @@ public class BookingService {
         dto.setInstallmentStatus(bookingInstallment.getInstallmentStatus());
         dto.setRemark(bookingInstallment.getRemark());
         dto.setUpdatedBy(bookingInstallment.getUpdatedBy());
+        dto.setUpdatedAt(bookingInstallment.getUpdatedAt());
 
 
         return dto;

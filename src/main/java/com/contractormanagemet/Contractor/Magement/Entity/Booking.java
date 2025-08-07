@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,10 +60,8 @@ public class Booking implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status")
     private BookingStatus bookingStatus;
-
     private String updatedBy;
-
-//
+    private LocalDateTime updatedAt; // <-- Add this field
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -213,6 +212,10 @@ public class Booking implements Serializable {
         this.setBookedOn(bookedOn);
         return this;
     }
+
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public void setBookedOn(LocalDate bookedOn) {
         this.bookedOn = bookedOn;

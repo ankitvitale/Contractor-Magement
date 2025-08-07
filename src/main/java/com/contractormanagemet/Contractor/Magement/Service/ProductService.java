@@ -4,18 +4,13 @@ import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductRequest;
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.ProductResponse;
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.StockAdditionResponse;
 import com.contractormanagemet.Contractor.Magement.DTO.StockDto.StockUsageResponse;
-import com.contractormanagemet.Contractor.Magement.Entity.Product;
-import com.contractormanagemet.Contractor.Magement.Entity.Project;
-import com.contractormanagemet.Contractor.Magement.Entity.StockAddition;
-import com.contractormanagemet.Contractor.Magement.Entity.StockUsage;
-import com.contractormanagemet.Contractor.Magement.Repository.ProductRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.ProjectRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.StockAdditionRepository;
-import com.contractormanagemet.Contractor.Magement.Repository.StockUsageRepository;
+import com.contractormanagemet.Contractor.Magement.Entity.*;
+import com.contractormanagemet.Contractor.Magement.Repository.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,7 +26,10 @@ public class ProductService {
 
     @Autowired
     private StockAdditionRepository stockAdditionRepository;
-
+    @Autowired
+    private SubAdminRepository subAdminRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
 
@@ -189,7 +187,9 @@ public Product createProduct(ProductRequest request) {
                 usageResponses,
                 projectSummary,
                 used,
-                remaining
+                remaining,
+                product.getUpdatedBy(),
+                product.getUpdatedAt()
         );
     }
 
@@ -206,6 +206,7 @@ public Product createProduct(ProductRequest request) {
 
         productRepository.delete(product);
     }
+
 
     public Product updateProduct(Long productId, ProductRequest request) {
         Product product = productRepository.findById(productId)
@@ -227,8 +228,58 @@ public Product createProduct(ProductRequest request) {
             product.setProject(project);
         }
 
+        // ✅ Add updatedBy and updatedAt
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Employee employee = employeeRepository.findByEmail(email);
+        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
+
+        String fullNameWithEmail = null;
+
+        if (employee != null) {
+            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+        } else if (subAdmin != null) {
+            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+        } else if (isAdmin) {
+            fullNameWithEmail = "Admin (" + email + ")";
+        } else {
+            fullNameWithEmail = "Edit By Admin (" + email + ")";
+        }
+
+        product.setUpdatedBy(fullNameWithEmail);
+        product.setUpdatedAt(LocalDateTime.now());
+
         return productRepository.save(product);
     }
+
+
+//    public Product updateProduct(Long productId, ProductRequest request) {
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new RuntimeException("Product not found"));
+//
+//        product.setName(request.getName());
+//        product.setPrice(request.getPrice());
+//        product.setTotalQuantityString(request.getTotalQuantityString());
+//        product.setProductAddOnDate(request.getProductAddOnDate());
+//
+//        if (request.getTotalQuantityString() != null && !request.getTotalQuantityString().isEmpty()) {
+//            int quantityValue = extractNumericValue(request.getTotalQuantityString());
+//            product.setTotalQuantityValue(quantityValue);
+//        }
+//
+//        if (request.getProjectId() != null) {
+//            Project project = projectRepository.findById(request.getProjectId())
+//                    .orElseThrow(() -> new RuntimeException("Project not found"));
+//            product.setProject(project);
+//        }
+//
+//        return productRepository.save(product);
+//    }
 
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)

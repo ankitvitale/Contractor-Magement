@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class Product {
     private int totalQuantityValue;     // 100
 
     private LocalDate productAddOnDate;
+    private String updatedBy;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("product") // prevent circular reference
@@ -82,7 +85,21 @@ public class Product {
         this.stockAdditions = stockAdditions;
     }
 
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     //    @Override
     public String toString() {

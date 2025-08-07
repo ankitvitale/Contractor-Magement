@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -245,7 +246,7 @@ public class LandService {
         }
 
         existingLand.setUpdatedBy(fullNameWithEmail);
-
+        existingLand.setUpdatedAt(LocalDateTime.now());
 
         Land updatedLand = landRepository.save(existingLand);
 
@@ -344,7 +345,10 @@ public class LandService {
                 partnerWithTransactionsDto.setName(partner.getName());
                 partnerWithTransactionsDto.setCity(partner.getCity());
                 partnerWithTransactionsDto.setPhoneNumber(partner.getPhoneNumber());
-                partnerWithTransactionsDto.setPaymentDate(partner.getPaymentDate().toString());
+//                partnerWithTransactionsDto.setPaymentDate(partner.getPaymentDate().toString());
+                partnerWithTransactionsDto.setPaymentDate(
+                        partner.getPaymentDate() != null ? partner.getPaymentDate().toString() : null
+                );
                 partnerWithTransactionsDto.setLandTransactions(new ArrayList<>());
                 partnerWithTransactionsDto.setTotal(0.0); // Initialize the total field
 
@@ -477,6 +481,8 @@ public class LandService {
             txDto.setChange(transaction.getChange());
             txDto.setMadeBy(transaction.getMadeBy());
             txDto.setStatus(transaction.getStatus());
+            txDto.setUpdatedBy(transaction.getUpdatedBy());
+            txDto.setUpdatedAt(transaction.getUpdatedAt());
 
             dto.getLandTransactions().add(txDto);
         }
@@ -515,11 +521,12 @@ public class LandService {
         } else if (isAdmin) {
             fullNameWithEmail = "Admin";
         } else {
-            fullNameWithEmail = "Unknown User (" + email + ")";
+            fullNameWithEmail = "Edit By Admin (" + email + ")";
         }
 
         // Save the person who updated it
         landTransaction.setUpdatedBy(fullNameWithEmail);
+        landTransaction.setUpdatedAt(LocalDateTime.now());
 
         return landTransactionRepository.save(landTransaction);
     }
@@ -601,6 +608,8 @@ public class LandService {
             txDto.setChange(tx.getChange());
             txDto.setMadeBy(tx.getMadeBy());
             txDto.setStatus(tx.getStatus());
+            txDto.setUpdatedBy(tx.getUpdatedBy());
+            txDto.setUpdatedAt(tx.getUpdatedAt());
             return txDto;
         }).toList());
 

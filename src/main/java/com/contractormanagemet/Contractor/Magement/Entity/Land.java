@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,8 @@ public class Land implements Serializable {
     @Column(name = "landAddOn_date")
     private LocalDate landAddOnDate;
     private String updatedBy;
+
+    private LocalDateTime updatedAt;
     @JsonIgnoreProperties(value = { "land" }, allowSetters = true)
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(unique = true)
@@ -160,4 +163,8 @@ public class Land implements Serializable {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
 }

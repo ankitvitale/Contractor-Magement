@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,7 @@ public class StructureContractorService {
         dto.setProjectId(contractor.getProject().getId());
         dto.setProjectName(contractor.getProject().getName());
         dto.setUpdatedBy(contractor.getUpdatedBy());
+        dto.setUpdatedAt(contractor.getUpdatedAt());
         return dto;
     }
 
@@ -87,22 +89,6 @@ public class StructureContractorService {
     }
 
 
-//    public StructureContractorResponseDto updateContractor(Long id, StructureContractorRequestDto dto) {
-//        StructureContractor contractor = contractorRepo.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Contractor not found"));
-//
-//        Project project = projectRepo.findById(dto.getProjectId())
-//                .orElseThrow(() -> new RuntimeException("Project not found"));
-//
-//        contractor.setPayableName(dto.getPayableName());
-//        contractor.setRemark(dto.getRemark());
-//        contractor.setDate(dto.getDate());
-//        contractor.setAmount(dto.getAmount());
-//        contractor.setProject(project);
-//
-//        StructureContractor updated = contractorRepo.save(contractor);
-//        return toDto(updated);
-//    }
 
 
     public StructureContractorResponseDto updateContractor(Long id, StructureContractorRequestDto dto) {
@@ -139,11 +125,12 @@ public class StructureContractorService {
         } else if (isAdmin) {
             fullNameWithEmail = "Admin (" + email + ")";
         } else {
-            fullNameWithEmail = "Unknown User (" + email + ")";
+            fullNameWithEmail = "Edit By Admin  (" + email + ")";
         }
 
         // Set updatedBy
         contractor.setUpdatedBy(fullNameWithEmail);
+        contractor.setUpdatedAt(LocalDateTime.now());
 
         // Save and return DTO
         StructureContractor updated = contractorRepo.save(contractor);

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class BookingInstallment {
@@ -26,7 +27,7 @@ public class BookingInstallment {
     private String remark;
 
     private String updatedBy;
-
+    private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     @JsonIgnoreProperties(value = { "bookingInstallments" }, allowSetters = true)
@@ -87,5 +88,13 @@ public class BookingInstallment {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

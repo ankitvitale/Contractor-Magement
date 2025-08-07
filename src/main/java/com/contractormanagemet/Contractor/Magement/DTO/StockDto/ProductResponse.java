@@ -3,6 +3,7 @@ package com.contractormanagemet.Contractor.Magement.DTO.StockDto;
 import com.contractormanagemet.Contractor.Magement.Entity.StockUsage;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductResponse {
@@ -17,6 +18,10 @@ public class ProductResponse {
     private ProjectSummary project;
     private int usedQuantity;
     private int remainingQuantity;
+
+    private String updatedBy;
+    private LocalDateTime updatedAt;
+
     public ProductResponse() {
     }
     public Long getId() {
@@ -99,7 +104,23 @@ public class ProductResponse {
         this.remainingQuantity = remainingQuantity;
     }
 
-    public ProductResponse(Long id, String name, double price, String totalQuantityString, int totalQuantityValue, LocalDate productAddOnDate, List<StockUsageResponse> usages, ProjectSummary project, int usedQuantity, int remainingQuantity) {
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public ProductResponse(Long id, String name, double price, String totalQuantityString, int totalQuantityValue, LocalDate productAddOnDate, List<StockUsageResponse> usages, ProjectSummary project, int usedQuantity, int remainingQuantity,String updatedBy,LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -110,6 +131,8 @@ public class ProductResponse {
         this.project = project;
         this.usedQuantity = usedQuantity;
         this.remainingQuantity = remainingQuantity;
+        this.updatedBy=updatedBy;
+        this.updatedAt=updatedAt;
     }
 
     public static class ProjectSummary {

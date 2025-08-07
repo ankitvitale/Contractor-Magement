@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class OfficeExpenses {
@@ -19,6 +20,7 @@ public class OfficeExpenses {
     String remark;
 
     String updatedBy; // new field
+    private LocalDateTime updatedAt; // <-- Add this field
 
     public Long getId() {
         return id;
@@ -75,4 +77,7 @@ public class OfficeExpenses {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

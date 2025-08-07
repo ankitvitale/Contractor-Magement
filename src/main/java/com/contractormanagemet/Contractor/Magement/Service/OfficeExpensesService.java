@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,72 +44,82 @@ public class OfficeExpensesService {
                 .orElseThrow(() -> new RuntimeException("Expense not found with ID: " + id));
     }
 
+
+
+
 //    public OfficeExpenses updateExpense(Long id, OfficeExpenses officeExpenses) {
 //        OfficeExpenses existing = getExpenseById(id);
+//
 //        existing.setDate(officeExpenses.getDate());
 //        existing.setReciverName(officeExpenses.getReciverName());
 //        existing.setGiverName(officeExpenses.getGiverName());
 //        existing.setAmount(officeExpenses.getAmount());
 //        existing.setRemark(officeExpenses.getRemark());
 //
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 //
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+//                .getAuthorities()
+//                .stream()
+//                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+//
+//        Employee employee = employeeRepository.findByEmail(email);
+//        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
 //
 //        String fullNameWithEmail = null;
 //
-//        if (employeeOpt.isPresent()) {
-//            Employee employee = employeeOpt.get();
+//        if (employee != null) {
 //            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
-//        } else if (subAdminOpt.isPresent()) {
-//            SubAdmin subAdmin = subAdminOpt.get();
+//        } else if (subAdmin != null) {
 //            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+//        } else if (isAdmin) {
+//            fullNameWithEmail = null; // Or use: fullNameWithEmail = "Admin";
 //        } else {
-//            throw new RuntimeException("Authenticated user not found in Employee or SubAdmin");
+//            fullNameWithEmail = "Unknown User (" + email + ")";
+//            // Or optionally, log and skip setting updatedBy
 //        }
 //
 //        existing.setUpdatedBy(fullNameWithEmail);
+//       existing.setDate(LocalDate.now());
 //
 //        return officeExpensesRepository.save(existing);
 //    }
+public OfficeExpenses updateExpense(Long id, OfficeExpenses officeExpenses) {
+    OfficeExpenses existing = getExpenseById(id);
 
+    existing.setDate(officeExpenses.getDate());
+    existing.setReciverName(officeExpenses.getReciverName());
+    existing.setGiverName(officeExpenses.getGiverName());
+    existing.setAmount(officeExpenses.getAmount());
+    existing.setRemark(officeExpenses.getRemark());
 
-    public OfficeExpenses updateExpense(Long id, OfficeExpenses officeExpenses) {
-        OfficeExpenses existing = getExpenseById(id);
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        existing.setDate(officeExpenses.getDate());
-        existing.setReciverName(officeExpenses.getReciverName());
-        existing.setGiverName(officeExpenses.getGiverName());
-        existing.setAmount(officeExpenses.getAmount());
-        existing.setRemark(officeExpenses.getRemark());
+    boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+            .getAuthorities()
+            .stream()
+            .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    Employee employee = employeeRepository.findByEmail(email);
+    SubAdmin subAdmin = subAdminRepository.findByEmail(email);
 
-        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities()
-                .stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+    String fullNameWithEmail = null;
 
-        Employee employee = employeeRepository.findByEmail(email);
-        SubAdmin subAdmin = subAdminRepository.findByEmail(email);
-
-        String fullNameWithEmail = null;
-
-        if (employee != null) {
-            fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
-        } else if (subAdmin != null) {
-            fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
-        } else if (isAdmin) {
-            fullNameWithEmail = null; // Or use: fullNameWithEmail = "Admin";
-        } else {
-            fullNameWithEmail = "Unknown User (" + email + ")";
-            // Or optionally, log and skip setting updatedBy
-        }
-
-        existing.setUpdatedBy(fullNameWithEmail);
-
-
-        return officeExpensesRepository.save(existing);
+    if (employee != null) {
+        fullNameWithEmail = employee.getName() + " (" + employee.getEmail() + ")";
+    } else if (subAdmin != null) {
+        fullNameWithEmail = subAdmin.getName() + " (" + subAdmin.getEmail() + ")";
+    } else if (isAdmin) {
+        fullNameWithEmail = "Admin (" + email + ")";
+    } else {
+        fullNameWithEmail = "Edit by Admin (" + email + ")";
     }
+
+    existing.setUpdatedBy(fullNameWithEmail);
+    existing.setUpdatedAt(LocalDateTime.now()); // <-- Set current date & time
+
+    return officeExpensesRepository.save(existing);
+}
 
 
     public void deleteExpense(Long id) {

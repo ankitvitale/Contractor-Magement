@@ -3,6 +3,7 @@ package com.contractormanagemet.Contractor.Magement.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class StructureContractor {
@@ -15,7 +16,7 @@ public class StructureContractor {
     private Double amount;
 
     private String updatedBy;
-
+    private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
@@ -76,5 +77,13 @@ public class StructureContractor {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
