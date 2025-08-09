@@ -29,19 +29,19 @@ public class OfficeExpensesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OfficeExpenses> getExpenseById(@PathVariable Long id) {
+    public ResponseEntity<OfficeExpenses> getExpenseById(@PathVariable("id") Long id) {
         OfficeExpenses expense = officeExpensesService.getExpenseById(id);
         return ResponseEntity.ok(expense);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<OfficeExpenses> updateExpense(@PathVariable Long id, @RequestBody OfficeExpenses officeExpenses) {
+    public ResponseEntity<OfficeExpenses> updateExpense(@PathVariable("id") Long id, @RequestBody OfficeExpenses officeExpenses) {
         OfficeExpenses updated = officeExpensesService.updateExpense(id, officeExpenses);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteExpense(@PathVariable Long id) {
+    public ResponseEntity<String> deleteExpense(@PathVariable("id") Long id) {
         officeExpensesService.deleteExpense(id);
         return ResponseEntity.ok("Expense deleted successfully");
     }
