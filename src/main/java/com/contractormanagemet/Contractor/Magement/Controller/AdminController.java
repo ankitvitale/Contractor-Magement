@@ -86,6 +86,9 @@ public class AdminController {
         return ResponseEntity.ok(updatedProject);
     }
 
-
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "hii";
+    }
 
 }
