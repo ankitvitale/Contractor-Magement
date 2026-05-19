@@ -28,7 +28,7 @@ public class SecurityConfig {
             "/api/registerAdmin",
             "/api/auth/login" ,
             "/api/employeeregister",
-            "/hello",
+            "/api/hello",
             "/api/getAllLeads",
             "/{id}/addLogs",
             "/getlead/{id}",
